@@ -41,7 +41,7 @@ function membersmap_init() {
 
     // Register widget
     elgg_register_widget_type('membersmap', elgg_echo("membersmap:wg:title"), elgg_echo("membersmap:wg:detail"), array('profile'), false);
-    elgg_register_widget_type('allmembersmap', elgg_echo("membersmap:wg:alltitle"), elgg_echo("membersmap:wg:alldetail"), array('dashboard'), false);
+    elgg_register_widget_type('allmembersmap', elgg_echo("membersmap:wg:alltitle"), elgg_echo("membersmap:wg:alldetail"), array('dashboard','index'), false);
     elgg_register_widget_type('groupmembersmap', elgg_echo("membersmap:widget:group:title"), elgg_echo("membersmap:widget:group:detail"), array('groups'), false);
 
     // register plugin hooks
