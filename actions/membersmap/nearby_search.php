@@ -124,10 +124,8 @@ if ($entities) {
             $object_x['icon'] = $e->getVolatileData('m_icon');
             $object_x['other_info'] = $e->getVolatileData('m_other_info');
             $object_x['map_icon'] = $e->getVolatileData('m_map_icon');
-            $object_x['info_window'] = $object_x['icon'].' '.$object_x['title'];
-            $object_x['info_window'] .= ($object_x['location']?'<br/>'.$object_x['location']:'');
-            $object_x['info_window'] .= ($object_x['other_info']?'<br/>'.$object_x['other_info']:'');
-            $object_x['info_window'] .= ($object_x['description']?'<br/>'.$object_x['description']:'');            
+            $object_x['info_window'] = elgg_view('membersmap/info_window',$object_x);
+            
             array_push($map_objects, $object_x);        
         }
     }
