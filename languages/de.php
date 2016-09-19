@@ -41,8 +41,8 @@ $language = array (
 	'membersmap:search:showradius' => 'Zeige Suchbereich',
 	'membersmap:search:submit' => 'Suche',
 	'membersmap:searchnearby' => 'Suche die am nächstgelegenen Mitglieder',
-	'membersmap:mylocationsis' => 'Mein Ort ist:',
-	'membersmap:searchbyname' => 'Suche Mitglieder nach Name',
+	'membersmap:mylocationsis' => 'Mein Standort ist: ',
+	'membersmap:searchbyname' => 'Suche Mitglieder nach Namen',
 	'membersmap:search:name' => 'Name',
 	'membersmap:search:searchname' => 'Mitgliedersuche in Deiner Nähe für %s',
 	'membersmap:search:usernotfound' => 'Mitglieder nicht gefunden',
@@ -55,8 +55,8 @@ $language = array (
 	'membersmap:group:enablemaps' => 'Aktiviere Mitgliederkarte',
 
     //js alerts
-	'membersmap:map:1' => 'Bitte trage eine gültigen Standard-Ort in der Administrator-Sektion ein',
-	'membersmap:map:2' => 'keine gültigen Such-Adressen',
+	'membersmap:map:1' => 'Bitte einen gültigen Standard-Ort im Admin-Bereich eintragen',
+	'membersmap:map:2' => 'keine gültige Such-Adresse',
 	'membersmap:map:3' => 'Geocode war aus folgenden Gründen nicht erfolgreich',
 
     // settings
