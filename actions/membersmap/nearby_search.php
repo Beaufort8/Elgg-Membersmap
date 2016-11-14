@@ -175,7 +175,6 @@ if ($entities) {
             $object_x['other_info'] = $e->getVolatileData('m_other_info');
             $object_x['map_icon'] = $e->getVolatileData('m_map_icon');
             $object_x['info_window'] = elgg_view('membersmap/info_window',array('object_x'=>$object_x,'entity'=>$e));
-            
             array_push($map_objects, $object_x);
         }
     }
