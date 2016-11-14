@@ -75,12 +75,60 @@ if ($initial_load) {
 } 
 else {
     if ($s_keyword) {
-        $db_prefix = elgg_get_config("dbprefix");
-        $query = sanitise_string($s_keyword);
 
-        $options["joins"] = array("JOIN {$db_prefix}users_entity ge ON e.guid = ge.guid");
-        $where = "(ge.name LIKE '%$query%' OR ge.username LIKE '%$query%')";
-        $options["wheres"] = array($where);
+		$options['query'] = sanitise_string($s_keyword);
+
+		// $options['joins'] = (array) elgg_extract('joins', $options, array());
+		// $options['wheres'] = (array) elgg_extract('wheres', $options, array());
+	
+		$db_prefix = elgg_get_config('dbprefix');
+		$query = $options['query'];
+
+		$options['joins'][] = "JOIN {$db_prefix}users_entity ue ON e.guid = ue.guid";
+		//array_unshift($options['joins'], $join);
+		
+		// name
+		$fields = array('name');
+		$where = search_get_where_sql('ue', $fields, $options, FALSE);
+
+		// profile fields
+		// all profile fields:
+		// $profile_fields = array_keys(elgg_get_config('profile_fields'));
+		// specific profile fields:
+		$profile_fields = array(
+			'description',
+			'briefdescription',
+			'KEYWORDS',
+			'FIELDS_OF_RESEARCH',
+			'HOST_INSTITUTE',
+			'BASE_INSTITUTION');
+	
+		if (!empty($profile_fields)) {
+			$options['joins'][] = "JOIN {$db_prefix}metadata md on e.guid = md.entity_guid";
+			$options['joins'][] = "JOIN {$db_prefix}metastrings msv ON n_table.value_id = msv.id";
+		
+			// get the where clauses for the md names
+			// can't use egef_metadata() because the n_table join comes too late.
+			$clauses = _elgg_entities_get_metastrings_options('metadata', array(
+				'metadata_names' => $profile_fields,
+
+				// avoid notices
+				'metadata_values' => null,
+				'metadata_name_value_pairs' => null,
+				'metadata_name_value_pairs_operator' => null,
+				'metadata_case_sensitive' => null,
+				'order_by_metadata' => null,
+				'metadata_owner_guids' => null,
+			));
+			$options['joins'] = array_merge($clauses['joins'], $options['joins']);
+			// no fulltext index, can't disable fulltext search in this function.
+			// $md_where .= " AND " . search_get_where_sql('msv', array('string'), $options, FALSE);
+			$md_where = "(({$clauses['wheres'][0]}) AND msv.string LIKE '%$query%')";
+		
+			$options['wheres'][] = "(($where) OR ($md_where))";
+		} else {
+			$options['wheres'][] = "$where";
+		}
     }
 
     if ($coords) {
@@ -103,7 +151,8 @@ if ($group_guid) {
     $entities = elgg_get_entities_from_relationship($options);
 } 
 else {
-    $entities = elgg_get_entities_from_metadata($options);
+    // $entities = elgg_get_entities_from_metadata($options);
+    $entities = elgg_get_entities($options);
 }
 
 $map_objects = array();
@@ -116,7 +165,8 @@ if ($entities) {
         if ($e->getLatitude() && $e->getLongitude())  {
             $object_x = array();
             $object_x['guid'] = $e->getGUID();
-            $object_x['title'] = amap_ma_remove_shits($e->getVolatileData('m_title'));;
+            $object_x['title'] = amap_ma_remove_shits($e->getVolatileData('m_title'));
+            $object_x['url'] = $e->getURL();
             $object_x['description'] = amap_ma_get_entity_description($e->getVolatileData('m_description'));
             $object_x['location'] = elgg_echo('amap_maps_api:location', array(amap_ma_remove_shits($e->getVolatileData('m_location'))));	
             $object_x['lat'] = $e->getLatitude();
@@ -126,7 +176,7 @@ if ($entities) {
             $object_x['map_icon'] = $e->getVolatileData('m_map_icon');
             $object_x['info_window'] = elgg_view('membersmap/info_window',array('object_x'=>$object_x,'entity'=>$e));
             
-            array_push($map_objects, $object_x);        
+            array_push($map_objects, $object_x);
         }
     }
     
