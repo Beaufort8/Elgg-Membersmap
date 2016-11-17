@@ -47,33 +47,27 @@ $options = array(
 $options['metadata_name_value_pairs'][] = array('name' => 'location', 'value' => '', 'operand' => '!=');
 
 if ($initial_load) {
-    
     if ($initial_load == 'newest') {
         if (!$options['limit'])
             $options['limit'] = amap_ma_get_initial_limit('membersmap');
-
-        $title = elgg_echo('membersmap:newest', array($options['limit']));
-    }
-    else if ($initial_load == 'location') {
-        // retrieve coords of location asked, if any
-        $user = elgg_get_logged_in_user_entity();
-        if ($user->location) {
-            $s_lat = $user->getLatitude();
-            $s_long = $user->getLongitude();
-
-            if ($s_lat && $s_long) {
-                $s_radius = amap_ma_get_initial_radius('membersmap');
-                $search_radius_txt = $s_radius;
-                $s_radius = amap_ma_get_default_radius_search($s_radius);
-                $options = add_order_by_proximity_clauses($options, $s_lat, $s_long);
-                $options = add_distance_constraint_clauses($options, $s_lat, $s_long, $s_radius);
-
-                $title = elgg_echo('membersmap:members:nearby:search', array($user->location));
-            }
-        }
-    }
-} 
-else {
+        	$title = elgg_echo('membersmap:newest', array($options['limit']));
+    	}  else if ($initial_load == 'location') {
+			// retrieve coords of location asked, if any
+			$user = elgg_get_logged_in_user_entity();
+			if ($user->location) {
+				$s_lat = $user->getLatitude();
+				$s_long = $user->getLongitude();
+				if ($s_lat && $s_long) {
+					$s_radius = amap_ma_get_initial_radius('membersmap');
+					$search_radius_txt = $s_radius;
+					$s_radius = amap_ma_get_default_radius_search($s_radius);
+					$options = add_order_by_proximity_clauses($options, $s_lat, $s_long);
+					$options = add_distance_constraint_clauses($options, $s_lat, $s_long, $s_radius);
+					$title = elgg_echo('membersmap:members:nearby:search', array($user->location));
+				}
+			}
+		}
+    } else {
     if ($s_keyword) {
 
 		$options['query'] = sanitise_string($s_keyword);
@@ -151,8 +145,7 @@ if ($group_guid) {
     $entities = elgg_get_entities_from_relationship($options);
 } 
 else {
-    // $entities = elgg_get_entities_from_metadata($options);
-    $entities = elgg_get_entities($options);
+    $entities = elgg_get_entities_from_metadata($options);
 }
 
 $map_objects = array();
